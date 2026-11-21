@@ -1,6 +1,8 @@
 // News image entry: copies entry.png to the output directory.
 // Run with Node 22: node --experimental-strip-types main.ts
 // Output goes to $MAKEFUN_OUTPUT_DIR, or /output when unset.
+// The size check after the copy guards against a partial or
+// truncated write, so a mismatch fails loudly.
 import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -20,7 +22,7 @@ copyFileSync(source, target);
 const sourceSize = statSync(source).size;
 const targetSize = statSync(target).size;
 if (sourceSize !== targetSize) {
-  console.error(`size mismatch: source ${sourceSize} bytes, wrote ${targetSize} bytes`);
+  console.error(`size mismatch: expected ${sourceSize} bytes, wrote ${targetSize} bytes`);
   process.exit(1);
 }
 
